@@ -7,4 +7,10 @@
 
 2. **LinkedHashMap**
    **Key** 会 **保持插入时的顺序**
+   
+   ```java
+   LinkedHashMap<Integer, String> linkedHashMap = new LinkedHashMap<>();
+   ```
+   
+   
 

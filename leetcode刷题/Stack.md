@@ -1,7 +1,7 @@
 1. Stack has **add()** and **push()**, which are **different**;
    + Add(): to the **end**;
    + Push(): to the **top**;
-2. When use **Enhanced For Loop** (for-each loop), the order of **stack** will be **From Bottom To Top (FIFO)**. `for(String str : stack)`;
+2. When use **Enhanced For Loop** (for-each loop), the order of **stack** will be **From Bottom To Top (FIFO)**. `for(String str : stack)`; (即，从 **0** 开始)
 3. 1 & 2 is because **Stack extends Vector**;
 4. Check whether **Stack** & **Queue** & **Deque** is empty:
    ```java
