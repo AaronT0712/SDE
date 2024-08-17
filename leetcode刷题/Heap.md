@@ -14,7 +14,10 @@
    PriorityQueue<Integer> heap = new PriorityQueue<>();
    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
    																// 等于 <>((a,b) -> b.compareTo(a))   lambda exp
-   heap.add();  heap.remove();  heap.size();  heap.peek();
+   heap.add();  heap.offer();
+   heap.remove();  heap.poll();
+   heap.size();  
+   heap.peek();
    ```
 
 3. Heap can **follow some rules**

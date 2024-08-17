@@ -4,17 +4,19 @@
    // Set & Remove
    list.add();	list.set(index, Value); list.remove(index);	list.clear();
    // Get
-   list.get(index); list.size(); list.contains(); // 居然有contains(), 但是没有length()
+   list.get(index); list.size(); list.contains(); // 居然有contains()!!!, 但是没有length()
    // Iterate
    for(Integer num : list) {}
    // Print
    System.out.println(list);	// [A, B, C, D] but not ["A", "B",...]
+   // Sort
+   Collections.sort(aList);
    ```
    
 2. **Two-Dimensional** ArrayList **initialization**
 
    ```java
-   ArrayList<ArrayList<Integer>> aList = new ArrayList<>(size);
+   ArrayList<ArrayList<Integer>> aList = new ArrayList<>();
    aList.add(new ArrayList<>());	// We should also decide the length of internal arrayList
    ```
 

@@ -1,9 +1,5 @@
 1. **DFS** is implemented via **Recursion** or **Stack**, while **Queue** for the **BFS**;
 
-   ```java
-   ```
-
-   
 2. **BFS** (Is **better** than DFS in many problems)
 
    ```java

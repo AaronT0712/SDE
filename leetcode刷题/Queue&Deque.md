@@ -11,17 +11,21 @@
 2. Deque
    ```java
    Deque<Integer> deque = new ArrayDeque<>();
+   [Front/Head] ..... [End/Tail]
+   
    // Add
    deque.add(); deque.addLast(); deque.offer();				// Tail	
-   deque.addFirst();	deque.push();	deque.offerFirst();	// Head
+   deque.push(); deque.addFirst();	deque.offerFirst();	// Head
    // Remove
-   deque.removeLast();	// return Integer, Tail
-   deque.removeFirst();	// return Integer, Head;
+   deque.removeLast();	deque.pop();	// remove Tail
+   deque.removeFirst();	// remove Head;
    // Check
    deque.getFirst();		deque.getLast();
    deque.peekFirst();	deque.peekLast();
+   
+   deque.size();	deque.isEmpty();
    ```
-
+   
 3. **Monotonic Deque** [Monotonic](https://leetcode.com/explore/interview/card/leetcodes-interview-crash-course-data-structures-and-algorithms/706/stacks-and-queues/4517/)
    Very **important idea !** : When adding, follow the rules of monotonic.
    (1. When **keep** finding ***regional*** **MAX/MIN**)

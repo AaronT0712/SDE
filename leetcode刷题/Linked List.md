@@ -18,6 +18,7 @@
      prev = cur;
      cur = nextNode;
    }
+   return prev;	// 注意嗷！
    ```
-
+   
    

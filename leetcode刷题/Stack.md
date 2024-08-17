@@ -5,13 +5,14 @@
 3. 1 & 2 is because **Stack extends Vector**;
 4. Check whether **Stack** & **Queue** & **Deque** is empty:
    ```java
-   stack.isEmpty();	// 都可以使用
+   stack.isEmpty();	// 三者都可以使用
+   stac.size() == 0;	// 这样也行
    ```
    
 5. Use **StringBuilder** as a **Stack**
    ```java
    StringBuilder stack = new StringBuilder();
-   stack.length();	// length
+   stack.length();	// 相当于.size()
    stack.deleteCharAt(stack.length()-1);	// Pop out
    stack.append(Element);	// Push
    ```
