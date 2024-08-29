@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AsyncFlowClientData {
+public class AaronFlowClientData {
 
     private String user_id;
 
@@ -18,8 +18,5 @@ public class AsyncFlowClientData {
     private String schedule_log;
 
     private String task_context;
-
-
-
-
+    
 }

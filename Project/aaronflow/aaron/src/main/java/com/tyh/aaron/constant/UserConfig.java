@@ -4,7 +4,7 @@ package com.tyh.aaron.constant;
 public class UserConfig {
     public final static String USERID;
     static {
-        USERID = "zdf";
+        USERID = "tyh";
     }
     public final static int QUEUE_SIZE = 10000; // 线程池等待队列大小
 

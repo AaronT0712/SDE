@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AsyncTaskRequest {
-    AsyncFlowClientData taskData;
+    AaronFlowClientData taskData;
 }

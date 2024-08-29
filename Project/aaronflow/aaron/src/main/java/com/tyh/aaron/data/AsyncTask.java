@@ -3,7 +3,7 @@ package com.tyh.aaron.data;
 import lombok.Data;
 
 @Data
-public class AsyncFlowTask {
+public class AsyncTask {
     
     private Long id;
     

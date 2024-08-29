@@ -14,7 +14,7 @@ public class Lark implements AsyncExecutable {
         AsyncTaskSetStage asyncTaskSetStage = null;
         try {
             Method method = this.getClass().getMethod("printMsg2", String.class);
-            asyncTaskSetStage = setStage(this.getClass(), method.getName(), new Object[]{"我要开花！"}, method.getParameterTypes());
+            asyncTaskSetStage = setStage(this.getClass(), method.getName(), new Object[]{"我要工作！"}, method.getParameterTypes());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

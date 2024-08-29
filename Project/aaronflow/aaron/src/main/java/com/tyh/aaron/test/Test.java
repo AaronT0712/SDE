@@ -2,7 +2,7 @@ package com.tyh.aaron.test;
 
 import com.tyh.aaron.Client.TaskFlower;
 import com.tyh.aaron.Client.TaskFlowerImpl;
-import com.tyh.aaron.data.AsyncFlowClientData;
+import com.tyh.aaron.data.AaronFlowClientData;
 import com.tyh.aaron.data.AsyncTaskRequest;
 import com.tyh.aaron.data.AsyncTaskReturn;
 import com.tyh.aaron.task.Lark;
@@ -37,7 +37,7 @@ public class Test {
     }
 
     private static void testCeateTask() {
-        AsyncFlowClientData asyncFlowClientData = null;
+        AaronFlowClientData asyncFlowClientData = null;
         try {
             asyncFlowClientData = TaskBuilder.build(new Lark());
         } catch (NoSuchMethodException e) {

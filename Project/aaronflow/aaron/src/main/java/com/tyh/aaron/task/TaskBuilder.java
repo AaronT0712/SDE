@@ -2,7 +2,7 @@ package com.tyh.aaron.task;
 
 import com.alibaba.fastjson.JSON;
 import com.tyh.aaron.constant.UserConfig;
-import com.tyh.aaron.data.AsyncFlowClientData;
+import com.tyh.aaron.data.AaronFlowClientData;
 import com.tyh.aaron.data.NftTaskContext;
 import com.tyh.aaron.data.ScheduleLog;
 
@@ -13,14 +13,14 @@ import java.lang.reflect.Method;
  */
 public class TaskBuilder {
 
-    public static AsyncFlowClientData build(AsyncExecutable executable) throws NoSuchMethodException {
+    public static AaronFlowClientData build(AsyncExecutable executable) throws NoSuchMethodException {
         Class<? extends AsyncExecutable> aClass = executable.getClass();
         Method handProcess = aClass.getMethod("handleProcess");
         return TaskBuilder.build(aClass, handProcess.getName(), new Object[0], new Class[0]);
     }
 
     // 利用类信息创建任务
-    public static AsyncFlowClientData build(Class<?> clazz, String methodName, Object[] params, Class<?>[] parameterTypes, Object... envs) {
+    public static AaronFlowClientData build(Class<?> clazz, String methodName, Object[] params, Class<?>[] parameterTypes, Object... envs) {
         if (!AsyncExecutable.class.isAssignableFrom(clazz)) {
             throw new RuntimeException("The task must be implemented TaskDefinition!");
         }
@@ -38,7 +38,7 @@ public class TaskBuilder {
         // 上下文信息
         NftTaskContext nftTaskContext = new NftTaskContext(params, envs, parameterTypes);
         String taskContext = JSON.toJSONString(nftTaskContext);
-        return new AsyncFlowClientData(
+        return new AaronFlowClientData(
                 UserConfig.USERID,
                 taskType,
                 taskStage,
