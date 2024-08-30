@@ -2,7 +2,7 @@ package com.tyh.flowsvr.service.impl;
 
 import com.tyh.flowsvr.constant.ErrorStatusReturn;
 import com.tyh.flowsvr.constant.Task;
-import com.tyh.flowsvr.dao.AsyncFlowTaskDao;
+import com.tyh.flowsvr.dao.AaronFlowTaskDao;
 import com.tyh.flowsvr.dao.ScheduleConfigDao;
 import com.tyh.flowsvr.dao.TSchedulePosDao;
 import com.tyh.flowsvr.data.*;
@@ -29,7 +29,7 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
     Logger logger = LoggerFactory.getLogger(AsyncTaskServiceImpl.class);
 
     @Autowired
-    private AsyncFlowTaskDao asyncFlowTaskDao;
+    private AaronFlowTaskDao aaronFlowTaskDao;
 
     @Autowired
     private ScheduleConfigDao scheduleConfigDao;
@@ -38,38 +38,38 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
     private TSchedulePosDao tSchedulePosDao;
 
 
-    private AsyncFlowClientData getAsyncFlowClientData(AsyncTaskRequest asyncTaskGroup) {
-        AsyncFlowClientData asyncFlowClientData = asyncTaskGroup.getTaskData();
-        return asyncFlowClientData;
+    private AaronFlowClientData getAsyncFlowClientData(AsyncTaskRequest asyncTaskGroup) {
+        AaronFlowClientData aaronFlowClientData = asyncTaskGroup.getTaskData();
+        return aaronFlowClientData;
     }
 
     @Override
     public <T> ReturnStatus<T> createTask(AsyncTaskRequest asyncTaskRequest) {
-        AsyncFlowClientData asyncFlowClientData = getAsyncFlowClientData(asyncTaskRequest);
+        AaronFlowClientData aaronFlowClientData = getAsyncFlowClientData(asyncTaskRequest);
         TSchedulePos taskPos = null;
         try {
-            taskPos = tSchedulePosDao.getTaskPos(asyncFlowClientData.getTask_type());
+            taskPos = tSchedulePosDao.getTaskPos(aaronFlowClientData.getTask_type());
         } catch (Exception e) {
             return ErrorStatusReturn.ERR_GET_TASK_POS;
         }
         if (taskPos == null) {
             logger.error("db.TaskPosNsp.GetTaskPos failed.");
         }
-        String tableName = getTableName(taskPos.getScheduleEndPos(), asyncFlowClientData.getTask_type());
+        String tableName = getTableName(taskPos.getScheduleEndPos(), aaronFlowClientData.getTask_type());
 
         ScheduleConfig taskTypeCfg;
         try {
-            taskTypeCfg = scheduleConfigDao.getTaskTypeCfg(asyncFlowClientData.getTask_type());
+            taskTypeCfg = scheduleConfigDao.getTaskTypeCfg(aaronFlowClientData.getTask_type());
         } catch (Exception e) {
             logger.error("Visit t_task_type_cfg error");
             return ErrorStatusReturn.ERR_GET_TASK_SET_POS_FROM_DB;
         }
 
-        AsyncFlowTask asyncFlowTask = new AsyncFlowTask();
-        String taskId = getTaskId(asyncFlowClientData.getTask_type(), taskPos.getScheduleEndPos(), tableName);
+        AsyncTask asyncTask = new AsyncTask();
+        String taskId = getTaskId(aaronFlowClientData.getTask_type(), taskPos.getScheduleEndPos(), tableName);
         try {
-            fillTaskModel(asyncFlowClientData, asyncFlowTask, taskId, taskTypeCfg);
-            asyncFlowTaskDao.create(tableName, asyncFlowTask);
+            fillTaskModel(aaronFlowClientData, asyncTask, taskId, taskTypeCfg);
+            aaronFlowTaskDao.create(tableName, asyncTask);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("create task error");
@@ -84,25 +84,26 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
         return Utils.getTaskId() + "_" + taskType + "_" + tableName() + "_" + taskPos;
     }
 
-    public void fillTaskModel (AsyncFlowClientData asyncFlowClientData, AsyncFlowTask asyncFlowTask, String taskId, ScheduleConfig taskTypeCfg) {
-        asyncFlowTask.setTask_id(taskId);
-        asyncFlowTask.setUser_id(asyncFlowClientData.getUser_id());
-        asyncFlowTask.setTask_type(asyncFlowClientData.getTask_type());
-        asyncFlowTask.setTask_stage(asyncFlowClientData.getTask_stage());
+    public void fillTaskModel (AaronFlowClientData aaronFlowClientData, AsyncTask asyncTask, String taskId, ScheduleConfig taskTypeCfg) {
+        asyncTask.setTask_id(taskId);
+        asyncTask.setUser_id(aaronFlowClientData.getUser_id());
+        asyncTask.setTask_type(aaronFlowClientData.getTask_type());
+        asyncTask.setTask_stage(aaronFlowClientData.getTask_stage());
         Long currentTime = System.currentTimeMillis();
-        asyncFlowTask.setModify_time(currentTime);
-        asyncFlowTask.setMax_retry_interval(taskTypeCfg.getRetry_interval());
-        asyncFlowTask.setMax_retry_num(taskTypeCfg.getMax_retry_num());
-        asyncFlowTask.setCrt_retry_num(0);
-        asyncFlowTask.setOrder_time(currentTime);
-        asyncFlowTask.setCreate_time(currentTime);
-        asyncFlowTask.setStatus(TaskStatus.PENDING.getStatus());
-        asyncFlowTask.setSchedule_log(asyncFlowClientData.getSchedule_log());
-        asyncFlowTask.setTask_context(asyncFlowClientData.getTask_context());
+        asyncTask.setModify_time(currentTime);
+        asyncTask.setMax_retry_interval(taskTypeCfg.getRetry_interval());
+        asyncTask.setMax_retry_num(taskTypeCfg.getMax_retry_num());
+        asyncTask.setCrt_retry_num(0);
+        asyncTask.setOrder_time(currentTime);
+        asyncTask.setCreate_time(currentTime);
+        asyncTask.setStatus(TaskStatus.PENDING.getStatus());
+        asyncTask.setSchedule_log(aaronFlowClientData.getSchedule_log());
+        asyncTask.setTask_context(aaronFlowClientData.getTask_context());
     }
 
     @Override
     public <T> ReturnStatus<T> holdTask(String taskType, int status, int limit) {
+        // 不能超过最大数
         if (limit > Task.MAX_TASK_LIST_LIMIT) {
             limit = Task.MAX_TASK_LIST_LIMIT;
         }
@@ -117,22 +118,22 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
             return ErrorStatusReturn.ERR_GET_TASK_SET_POS_FROM_DB;
         }
         String tableName = getTableName(taskPos.getScheduleBeginPos(), taskType);
-        List<AsyncFlowTask> taskList;
+        List<AsyncTask> taskList;
         try {
-            taskList = asyncFlowTaskDao.getTaskList(taskType, status, limit, tableName);
+            taskList = aaronFlowTaskDao.getTaskList(taskType, status, limit, tableName);
 
         } catch (Exception e) {
             logger.error(ErrorStatus.ERR_GET_TASK_LIST_FROM_DB.getMsg());
             return ErrorStatusReturn.ERR_GET_TASK_LIST_FROM_DB;
         }
-        List<AsyncFlowTask> filterList = taskList
+        List<AsyncTask> filterList = taskList
                 .stream()
                 .parallel()
-                .filter(asyncFlowTask -> asyncFlowTask.getCrt_retry_num() == 0 || asyncFlowTask.getMax_retry_interval() != 0
-                        && asyncFlowTask.getOrder_time() <= System.currentTimeMillis()).collect(Collectors.toList());
+                .filter(asyncTask -> asyncTask.getCrt_retry_num() == 0 || asyncTask.getMax_retry_interval() != 0
+                        && asyncTask.getOrder_time() <= System.currentTimeMillis()).collect(Collectors.toList());
         List<String> ids = conventTaskIdList(filterList);
         if (!ids.isEmpty()) {
-            asyncFlowTaskDao.updateStatusBatch(ids, TaskStatus.EXECUTING.getStatus(), System.currentTimeMillis(), tableName);
+            aaronFlowTaskDao.updateStatusBatch(ids, TaskStatus.EXECUTING.getStatus(), System.currentTimeMillis(), tableName);
         }
         List<AsyncTaskReturn> taskReturns = getTaskReturnList(filterList);
         TaskList list = new TaskList(taskReturns);
@@ -155,9 +156,9 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
             return ErrorStatusReturn.ERR_GET_TASK_SET_POS_FROM_DB;
         }
         String tableName = getTableName(taskPos.getScheduleBeginPos(), taskType);
-        List<AsyncFlowTask> taskList;
+        List<AsyncTask> taskList;
         try {
-             taskList = asyncFlowTaskDao.getTaskList(taskType, status, limit, tableName);
+             taskList = aaronFlowTaskDao.getTaskList(taskType, status, limit, tableName);
 
         } catch (Exception e) {
             logger.error(ErrorStatus.ERR_GET_TASK_LIST_FROM_DB.getMsg());
@@ -168,28 +169,28 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
         return new ReturnStatus(list);
     }
 
-    private List<AsyncTaskReturn> getTaskReturns(List<AsyncFlowTask> taskList) {
+    private List<AsyncTaskReturn> getTaskReturns(List<AsyncTask> taskList) {
         List<AsyncTaskReturn> taskReturns = new ArrayList<>();
-        for (AsyncFlowTask asyncFlowTask : taskList) {
-            taskReturns.add(getTaskReturn(asyncFlowTask));
+        for (AsyncTask asyncTask : taskList) {
+            taskReturns.add(getTaskReturn(asyncTask));
         }
         return taskReturns;
     }
 
-    private AsyncTaskReturn getTaskReturn(AsyncFlowTask asyncFlowTask) {
+    private AsyncTaskReturn getTaskReturn(AsyncTask asyncTask) {
         AsyncTaskReturn tr = new AsyncTaskReturn(
-                asyncFlowTask.getUser_id(),
-                asyncFlowTask.getTask_id(),
-                asyncFlowTask.getTask_type(),
-                asyncFlowTask.getTask_stage(),
-                asyncFlowTask.getStatus(),
-                asyncFlowTask.getCrt_retry_num(),
-                asyncFlowTask.getMax_retry_num(),
-                asyncFlowTask.getMax_retry_interval(),
-                asyncFlowTask.getSchedule_log(),
-                asyncFlowTask.getTask_context(),
-                asyncFlowTask.getCreate_time(),
-                asyncFlowTask.getModify_time()
+                asyncTask.getUser_id(),
+                asyncTask.getTask_id(),
+                asyncTask.getTask_type(),
+                asyncTask.getTask_stage(),
+                asyncTask.getStatus(),
+                asyncTask.getCrt_retry_num(),
+                asyncTask.getMax_retry_num(),
+                asyncTask.getMax_retry_interval(),
+                asyncTask.getSchedule_log(),
+                asyncTask.getTask_context(),
+                asyncTask.getCreate_time(),
+                asyncTask.getModify_time()
         );
         return tr;
 
@@ -198,54 +199,54 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
 
     @Override
     public <T> ReturnStatus<T> setTask(AsyncTaskSetRequest asyncTaskSetRequest) {
-        AsyncFlowTask asyncFlowTask;
+        AsyncTask asyncTask;
         String tableName = getTableNameById(asyncTaskSetRequest.getTask_id());
         try {
-            asyncFlowTask = asyncFlowTaskDao.find(asyncTaskSetRequest.getTask_id(), tableName);
+            asyncTask = aaronFlowTaskDao.find(asyncTaskSetRequest.getTask_id(), tableName);
         } catch (Exception e) {
             logger.error(ErrorStatus.ERR_GET_TASK_INFO.getMsg());
             return ErrorStatusReturn.ERR_GET_TASK_INFO;
         }
 
-        if (asyncFlowTask == null) {
+        if (asyncTask == null) {
             logger.error("db.TaskPosNsp.Find Task failed. TaskId:%s", asyncTaskSetRequest.getTask_id());
             return ErrorStatusReturn.ERR_GET_TASK_INFO;
         }
         if (!isUnUpdate(asyncTaskSetRequest.getStatus())) {
-            asyncFlowTask.setStatus(asyncTaskSetRequest.getStatus());
+            asyncTask.setStatus(asyncTaskSetRequest.getStatus());
         }
         if (!isNullString(asyncTaskSetRequest.getTask_stage())) {
-            asyncFlowTask.setTask_stage(asyncTaskSetRequest.getTask_stage());
+            asyncTask.setTask_stage(asyncTaskSetRequest.getTask_stage());
         }
         if (!isNullString(asyncTaskSetRequest.getTask_context())) {
-            asyncFlowTask.setTask_context(asyncTaskSetRequest.getTask_context());
+            asyncTask.setTask_context(asyncTaskSetRequest.getTask_context());
         }
         if (!isNullString(asyncTaskSetRequest.getSchedule_log())) {
-            asyncFlowTask.setSchedule_log(asyncTaskSetRequest.getSchedule_log());
+            asyncTask.setSchedule_log(asyncTaskSetRequest.getSchedule_log());
         }
         if (!isUnUpdate(asyncTaskSetRequest.getCrt_retry_num())) {
-            asyncFlowTask.setCrt_retry_num(asyncTaskSetRequest.getCrt_retry_num());
+            asyncTask.setCrt_retry_num(asyncTaskSetRequest.getCrt_retry_num());
         }
         if (!isUnUpdate(asyncTaskSetRequest.getMax_retry_interval())) {
-            asyncFlowTask.setMax_retry_interval(asyncTaskSetRequest.getMax_retry_interval());
+            asyncTask.setMax_retry_interval(asyncTaskSetRequest.getMax_retry_interval());
         }
         if (!isUnUpdate(asyncTaskSetRequest.getMax_retry_num())) {
-            asyncFlowTask.setMax_retry_num(asyncTaskSetRequest.getMax_retry_num());
+            asyncTask.setMax_retry_num(asyncTaskSetRequest.getMax_retry_num());
         }
         if (asyncTaskSetRequest.getOrder_time() != 0) {
-            asyncFlowTask.setOrder_time(asyncTaskSetRequest.getOrder_time());
+            asyncTask.setOrder_time(asyncTaskSetRequest.getOrder_time());
         }
         if (!isUnUpdate(asyncTaskSetRequest.getPriority())) {
-            asyncFlowTask.setPriority(asyncTaskSetRequest.getPriority());
+            asyncTask.setPriority(asyncTaskSetRequest.getPriority());
         }
 
-        asyncFlowTask.setModify_time(System.currentTimeMillis());
+        asyncTask.setModify_time(System.currentTimeMillis());
         try {
             List<Integer> list = new ArrayList<Integer>() {{
                 add(TaskStatus.SUCCESS.getStatus());
                 add(TaskStatus.FAIL.getStatus());
             }};
-            asyncFlowTaskDao.updateTask(asyncFlowTask, list, tableName);
+            aaronFlowTaskDao.updateTask(asyncTask, list, tableName);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(ErrorStatus.ERR_SET_TASK.getMsg());
@@ -270,30 +271,30 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
 
     @Override
     public <T> ReturnStatus<T> getTask(String task_id) {
-        AsyncFlowTask asyncFlowTask;
+        AsyncTask asyncTask;
         String tableName = getTableNameById(task_id);
         try {
-            asyncFlowTask = asyncFlowTaskDao.find(task_id, tableName);
+            asyncTask = aaronFlowTaskDao.find(task_id, tableName);
         } catch (Exception e) {
             logger.error("get task info error");
             return ErrorStatusReturn.ERR_GET_TASK_INFO;
         }
-        TaskByTaskIdReturn<AsyncTaskReturn> taskByTaskIdReturn = new TaskByTaskIdReturn(getTaskReturn(asyncFlowTask));
+        TaskByTaskIdReturn<AsyncTaskReturn> taskByTaskIdReturn = new TaskByTaskIdReturn(getTaskReturn(asyncTask));
         return new ReturnStatus(taskByTaskIdReturn);
     }
 
     @Override
     public <T> ReturnStatus<T> getTaskByUserIdAndStatus(String user_id, int statusList) {
 
-        List<AsyncFlowTask> asyncFlowTaskList;
+        List<AsyncTask> asyncTaskList;
         String tableName = getTableName(1, "LarkTask");
         try {
-            asyncFlowTaskList = asyncFlowTaskDao.getTaskByUser_idAndStatus(user_id, getStatusList(statusList), tableName);
+            asyncTaskList = aaronFlowTaskDao.getTaskByUser_idAndStatus(user_id, getStatusList(statusList), tableName);
         } catch (Exception e) {
             logger.error("get task info error");
             return ErrorStatusReturn.ERR_GET_TASK_INFO;
         }
-        List<AsyncTaskReturn> taskReturns = getTaskReturns(asyncFlowTaskList);
+        List<AsyncTaskReturn> taskReturns = getTaskReturns(asyncTaskList);
         TaskList list = new TaskList(taskReturns);
         return new ReturnStatus(list);
     }
@@ -311,54 +312,54 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
     }
 
 
-    private List<AsyncTaskReturn> getAsyncTaskReturns(List<AsyncFlowTask> taskList) {
+    private List<AsyncTaskReturn> getAsyncTaskReturns(List<AsyncTask> taskList) {
         return getTaskReturnList(taskList);
     }
 
-    private List<AsyncTaskReturn> getTaskReturnList(List<AsyncFlowTask> taskList) {
+    private List<AsyncTaskReturn> getTaskReturnList(List<AsyncTask> taskList) {
         List<AsyncTaskReturn> tasks = new ArrayList<>();
-        for (AsyncFlowTask asyncFlowTask : taskList) {
+        for (AsyncTask asyncTask : taskList) {
             AsyncTaskReturn asyncTaskReturn = new AsyncTaskReturn(
-                    asyncFlowTask.getUser_id(),
-                    asyncFlowTask.getTask_id(),
-                    asyncFlowTask.getTask_type(),
-                    asyncFlowTask.getTask_stage(),
-                    asyncFlowTask.getStatus(),
-                    asyncFlowTask.getCrt_retry_num(),
-                    asyncFlowTask.getMax_retry_num(),
-                    asyncFlowTask.getMax_retry_interval(),
-                    asyncFlowTask.getSchedule_log(),
-                    asyncFlowTask.getTask_context(),
-                    asyncFlowTask.getCreate_time(),
-                    asyncFlowTask.getModify_time()
+                    asyncTask.getUser_id(),
+                    asyncTask.getTask_id(),
+                    asyncTask.getTask_type(),
+                    asyncTask.getTask_stage(),
+                    asyncTask.getStatus(),
+                    asyncTask.getCrt_retry_num(),
+                    asyncTask.getMax_retry_num(),
+                    asyncTask.getMax_retry_interval(),
+                    asyncTask.getSchedule_log(),
+                    asyncTask.getTask_context(),
+                    asyncTask.getCreate_time(),
+                    asyncTask.getModify_time()
             );
             tasks.add(asyncTaskReturn);
         }
         return tasks;
     }
 
-    public List<String> conventTaskIdList(List<AsyncFlowTask> list) {
-        return list.stream().map(AsyncFlowTask::getId).collect(Collectors.toList());
+    public List<String> conventTaskIdList(List<AsyncTask> list) {
+        return list.stream().map(AsyncTask::getId).collect(Collectors.toList());
     }
 
     public int getTaskCountByStatus(TaskStatus taskStatus) {
         String tableName = getTableName(1, "LarkTask");
-        return asyncFlowTaskDao.getTaskCountByStatus(taskStatus.getStatus(), tableName);
+        return aaronFlowTaskDao.getTaskCountByStatus(taskStatus.getStatus(), tableName);
     }
 
     public int getAliveTaskCount() {
         String tableName = getTableName(1, "LarkTask");
-        return asyncFlowTaskDao.getTaskCount(this.getAliveStatus(), tableName);
+        return aaronFlowTaskDao.getTaskCount(this.getAliveStatus(), tableName);
     }
 
     public int getAllTaskCount() {
         String tableName = getTableName(1, "LarkTask");
-        return asyncFlowTaskDao.getTaskCount(this.getAllStatus(), tableName);
+        return aaronFlowTaskDao.getTaskCount(this.getAllStatus(), tableName);
     }
 
-    public List<AsyncFlowTask> getAliveTaskList() {
+    public List<AsyncTask> getAliveTaskList() {
         String tableName = getTableName(1, "LarkTask");
-        return asyncFlowTaskDao.getAliveTaskList(this.getAliveStatus(), tableName);
+        return aaronFlowTaskDao.getAliveTaskList(this.getAliveStatus(), tableName);
     }
 
     public List<Integer> getAliveStatus() {

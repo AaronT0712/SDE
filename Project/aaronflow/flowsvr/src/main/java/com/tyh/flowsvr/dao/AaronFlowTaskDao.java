@@ -1,28 +1,28 @@
 package com.tyh.flowsvr.dao;
 
-import com.tyh.flowsvr.data.AsyncFlowTask;
+import com.tyh.flowsvr.data.AsyncTask;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface AsyncFlowTaskDao {
+public interface AaronFlowTaskDao {
     /**
      * 创建任务
      *
-     * @param asyncFlowTask
+     * @param asyncTask
      * @param tableName
      */
-    void create(@Param("tableName") String tableName, @Param("asyncFlowTask") AsyncFlowTask asyncFlowTask);
+    void create(@Param("tableName") String tableName, @Param("asyncTask") AsyncTask asyncTask);
 
     /**
      * 新增或更新任务
      *
-     * @param asyncFlowTask
+     * @param asyncTask
      * @param tableName
      */
-    void save(@Param("asyncFlowTask") AsyncFlowTask asyncFlowTask, @Param("tableName") String tableName);
+    void save(@Param("asyncTask") AsyncTask asyncTask, @Param("tableName") String tableName);
 
     /**
      * 获得对应状态的对应任务列表
@@ -33,17 +33,17 @@ public interface AsyncFlowTaskDao {
      * @param tableName
      * @return
      */
-    List<AsyncFlowTask> getTaskList(@Param("taskType") String taskType, @Param("status") int status,
-                                    @Param("limit") int limit, @Param("tableName") String tableName);
+    List<AsyncTask> getTaskList(@Param("taskType") String taskType, @Param("status") int status,
+                                @Param("limit") int limit, @Param("tableName") String tableName);
 
     /**
      * 更新任务信息
      *
-     * @param asyncFlowTask
+     * @param asyncTask
      * @param statuss
      * @param tableName
      */
-    void updateTask(@Param("asyncFlowTask") AsyncFlowTask asyncFlowTask,
+    void updateTask(@Param("asyncTask") AsyncTask asyncTask,
                     @Param("statuss") List<Integer> statuss, @Param("tableName") String tableName);
 
     /**
@@ -53,8 +53,8 @@ public interface AsyncFlowTaskDao {
      * @param tableName
      * @return
      */
-    List<AsyncFlowTask> getAliveTaskList(@Param("statusList") List<Integer> statusList,
-                                         @Param("tableName") String tableName);
+    List<AsyncTask> getAliveTaskList(@Param("statusList") List<Integer> statusList,
+                                     @Param("tableName") String tableName);
 
     /**
      * 获取对应状态的任务数
@@ -84,10 +84,10 @@ public interface AsyncFlowTaskDao {
      * @param tableName
      * @return
      */
-    List<AsyncFlowTask> getLongTimeProcessing(@Param("status") int status, @Param("limit") int limit,
-                                              @Param("maxProcessTime") long maxProcessTime,
-                                              @Param("currentTime") long currentTime,
-                                              @Param("tableName") String tableName);
+    List<AsyncTask> getLongTimeProcessing(@Param("status") int status, @Param("limit") int limit,
+                                          @Param("maxProcessTime") long maxProcessTime,
+                                          @Param("currentTime") long currentTime,
+                                          @Param("tableName") String tableName);
 
     /**
      * 增加重试次数
@@ -104,7 +104,7 @@ public interface AsyncFlowTaskDao {
      * @param tableName
      * @return
      */
-    AsyncFlowTask find(@Param("task_id") String task_id, @Param("tableName") String tableName);
+    AsyncTask find(@Param("task_id") String task_id, @Param("tableName") String tableName);
 
     /**
      * 设置任务状态
@@ -143,8 +143,8 @@ public interface AsyncFlowTaskDao {
      * @param tableName
      * @return
      */
-    List<AsyncFlowTask> getTaskByUser_idAndStatus(@Param("user_id") String user_id, @Param("statusList") List<Integer> statusList,
-                                                  @Param("tableName") String tableName);
+    List<AsyncTask> getTaskByUser_idAndStatus(@Param("user_id") String user_id, @Param("statusList") List<Integer> statusList,
+                                              @Param("tableName") String tableName);
 
     /**
      * 将列表中的任务修改为指定状态

@@ -3,7 +3,7 @@ package com.tyh.flowsvr.data;
 import lombok.Data;
 
 @Data
-public class AsyncFlowClientData {
+public class AaronFlowClientData {
 
     private String user_id;
 

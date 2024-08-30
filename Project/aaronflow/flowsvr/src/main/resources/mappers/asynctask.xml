@@ -4,12 +4,12 @@
 <!--
 namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，预防在不同的Mapper XML文件中存在相同的语句ID
 -->
-<mapper namespace="com.tyh.flowsvr.dao.AsyncFlowTaskDao">
+<mapper namespace="com.tyh.flowsvr.dao.AaronFlowTaskDao">
     <!--
         resultType: 也称为自动映射，只有在表的列名与POJO类的属性完全一致时使用，会比较方便，全类名
     -->
 
-    <resultMap id="getTaskList" type="com.tyh.flowsvr.data.AsyncFlowTask">
+    <resultMap id="getTaskList" type="com.tyh.flowsvr.data.AsyncTask">
         <result column="id" jdbcType="BIGINT" property="id" />
         <result column="user_id" jdbcType="VARCHAR" property="user_id"/>
         <result column="task_id" jdbcType="VARCHAR" property="task_id"/>
@@ -35,23 +35,23 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
             task_id = #{task_id}
     </update>
     <update id="updateTask"
-            parameterType="com.tyh.flowsvr.data.AsyncFlowTask">
+            parameterType="com.tyh.flowsvr.data.AsyncTask">
         update
         ${tableName}
         set
-        user_id = #{asyncFlowTask.user_id},
-        task_stage = #{asyncFlowTask.task_stage},
-        status = #{asyncFlowTask.status},
-        crt_retry_num = #{asyncFlowTask.crt_retry_num},
-        max_retry_num = #{asyncFlowTask.max_retry_num},
-        max_retry_interval = #{asyncFlowTask.max_retry_interval},
-        schedule_log = #{asyncFlowTask.schedule_log},
-        task_context = #{asyncFlowTask.task_context},
-        create_time = #{asyncFlowTask.create_time},
-        modify_time = #{asyncFlowTask.modify_time},
-        order_time = #{asyncFlowTask.order_time}
+        user_id = #{asyncTask.user_id},
+        task_stage = #{asyncTask.task_stage},
+        status = #{asyncTask.status},
+        crt_retry_num = #{asyncTask.crt_retry_num},
+        max_retry_num = #{asyncTask.max_retry_num},
+        max_retry_interval = #{asyncTask.max_retry_interval},
+        schedule_log = #{asyncTask.schedule_log},
+        task_context = #{asyncTask.task_context},
+        create_time = #{asyncTask.create_time},
+        modify_time = #{asyncTask.modify_time},
+        order_time = #{asyncTask.order_time}
         where
-        task_id = #{asyncFlowTask.task_id}
+        task_id = #{asyncTask.task_id}
         and
         status not in
         <foreach collection="statuss" item="s" index="index"
@@ -103,7 +103,7 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
         order by order_time
         limit #{limit}
     </select>
-    <select id="getAliveTaskList" resultType="com.tyh.flowsvr.data.AsyncFlowTask">
+    <select id="getAliveTaskList" resultType="com.tyh.flowsvr.data.AsyncTask">
         select * from ${tableName}
         where
         status in
@@ -118,7 +118,7 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
         where
             status = #{status}
     </select>
-    <select id="getLongTimeProcessing" resultType="com.tyh.flowsvr.data.AsyncFlowTask">
+    <select id="getLongTimeProcessing" resultType="com.tyh.flowsvr.data.AsyncTask">
         select * from ${tableName}
         where
             status = #{status}
@@ -139,7 +139,7 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
             #{status}
         </foreach>
     </select>
-    <select id="getTaskByUser_idAndStatus" resultType="com.tyh.flowsvr.data.AsyncFlowTask">
+    <select id="getTaskByUser_idAndStatus" resultType="com.tyh.flowsvr.data.AsyncTask">
         select * from ${tableName}
         where
         user_id = #{user_id}
@@ -153,7 +153,7 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
 
 
     <insert id="create"
-            useGeneratedKeys="true" keyProperty="asyncFlowTask.id">
+            useGeneratedKeys="true" keyProperty="asyncTask.id">
         INSERT INTO ${tableName} (`user_id`,
                                   `task_id`,
                                   `task_type`,
@@ -168,20 +168,20 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
                                   `task_context`,
                                   `create_time`,
                                   `modify_time`)
-        VALUES (#{asyncFlowTask.user_id},
-                #{asyncFlowTask.task_id},
-                #{asyncFlowTask.task_type},
-                #{asyncFlowTask.task_stage},
-                #{asyncFlowTask.status},
-                #{asyncFlowTask.crt_retry_num},
-                #{asyncFlowTask.max_retry_num},
-                #{asyncFlowTask.order_time},
-                #{asyncFlowTask.priority},
-                #{asyncFlowTask.max_retry_interval},
-                #{asyncFlowTask.schedule_log},
-                #{asyncFlowTask.task_context},
-                #{asyncFlowTask.create_time},
-                #{asyncFlowTask.modify_time})
+        VALUES (#{asyncTask.user_id},
+                #{asyncTask.task_id},
+                #{asyncTask.task_type},
+                #{asyncTask.task_stage},
+                #{asyncTask.status},
+                #{asyncTask.crt_retry_num},
+                #{asyncTask.max_retry_num},
+                #{asyncTask.order_time},
+                #{asyncTask.priority},
+                #{asyncTask.max_retry_interval},
+                #{asyncTask.schedule_log},
+                #{asyncTask.task_context},
+                #{asyncTask.create_time},
+                #{asyncTask.modify_time})
     </insert>
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
         <selectKey keyProperty="count" resultType="int" order="BEFORE">
@@ -190,25 +190,25 @@ namespace: 命名空间，用于标识每一个Mapper XML文件中的语句，�
         <if test="count > 0">
             update ${tableName}
             set
-            user_id = #{asyncFlowTask.user_id},
-            task_stage = #{asyncFlowTask.task_stage},
-            status = #{asyncFlowTask.status},
-            crt_retry_num = #{asyncFlowTask.crt_retry_num},
-            max_retry_num = #{asyncFlowTask.max_retry_num},
-            priority = {asyncFlowTask.priority},
-            order_time = #{asyncFlowTask.order_time},
-            max_retry_interval = #{asyncFlowTask.max_retry_interval},
-            schedule_log = #{asyncFlowTask.schedule_log},
-            task_context = #{asyncFlowTask.task_context},
-            modify_time = #{asyncFlowTask.modify_time}
-            where id = #{asyncFlowTask.id}
+            user_id = #{asyncTask.user_id},
+            task_stage = #{asyncTask.task_stage},
+            status = #{asyncTask.status},
+            crt_retry_num = #{asyncTask.crt_retry_num},
+            max_retry_num = #{asyncTask.max_retry_num},
+            priority = {asyncTask.priority},
+            order_time = #{asyncTask.order_time},
+            max_retry_interval = #{asyncTask.max_retry_interval},
+            schedule_log = #{asyncTask.schedule_log},
+            task_context = #{asyncTask.task_context},
+            modify_time = #{asyncTask.modify_time}
+            where id = #{asyncTask.id}
         </if>
         <if test="count==0">
             insert into ${tableName}
-            VALUES (#{asyncFlowTask.user_id}, #{asyncFlowTask.task_id}, #{asyncFlowTask.task_type}, #{asyncFlowTask.task_stage},
-            #{asyncFlowTask.status}, #{asyncFlowTask.crt_retry_num}, #{asyncFlowTask.priority}, #{asyncFlowTask.order_time},
-            #{asyncFlowTask.max_retry_num}, #{asyncFlowTask.max_retry_interval},
-            #{asyncFlowTask.schedule_log}, #{asyncFlowTask.task_context}, #{asyncFlowTask.create_time}, #{masyncFlowTask.odify_time})
+            VALUES (#{asyncTask.user_id}, #{asyncTask.task_id}, #{asyncTask.task_type}, #{asyncTask.task_stage},
+            #{asyncTask.status}, #{asyncTask.crt_retry_num}, #{asyncTask.priority}, #{asyncTask.order_time},
+            #{asyncTask.max_retry_num}, #{asyncTask.max_retry_interval},
+            #{asyncTask.schedule_log}, #{asyncTask.task_context}, #{asyncTask.create_time}, #{masyncFlowTask.odify_time})
         </if>
 
     </insert>

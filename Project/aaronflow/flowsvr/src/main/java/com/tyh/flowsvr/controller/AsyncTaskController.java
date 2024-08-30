@@ -56,10 +56,8 @@ public class AsyncTaskController {
         return asyncTaskService.holdTask(taskType, status, limit);
     }
 
-
-
     @PostMapping("/set_task")
-    public ReturnStatus addTask(@RequestBody AsyncTaskSetRequest asyncTaskSetRequest) {
+    public ReturnStatus setTask(@RequestBody AsyncTaskSetRequest asyncTaskSetRequest) {
         if (isStrNull(asyncTaskSetRequest.getTask_id())) {
             logger.error("input invalid");
             return ErrorStatusReturn.ERR_INPUT_INVALID;

@@ -1,4 +1,5 @@
 use aaronflow;
+
 CREATE TABLE `t_lark_task_1`
 (
     `id`                 int(11)                                  NOT NULL AUTO_INCREMENT,
@@ -6,7 +7,7 @@ CREATE TABLE `t_lark_task_1`
     `task_id`            varchar(256) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
     `task_type`          varchar(128) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
     `task_stage`         varchar(128) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
-    `status`             tinyint(3) unsigned                      NOT NULL DEFAULT '0',
+    `status`             tinyint(3) unsigned                      NOT NULL DEFAULT '0' COMMENT '1等待中-2执行中-3成功-4失败',
     `priority`           int(11)                                  NOT NULL DEFAULT '0' COMMENT '优先级',
     `crt_retry_num`      int(11)                                  NOT NULL DEFAULT '0' COMMENT '已经重试几次了',
     `max_retry_num`      int(11)                                  NOT NULL DEFAULT '0' COMMENT '最大能重试几次',
@@ -30,7 +31,7 @@ CREATE TABLE `t_schedule_cfg`
 (
     `task_type`           varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '任务类型',
     `schedule_limit`      int(11)                                          DEFAULT '0' COMMENT '一次拉取多少个任务',
-    `schedule_interval`   int(11)                                 NOT NULL DEFAULT '10',
+    `schedule_interval`   int(11)                                 NOT NULL DEFAULT '10' COMMENT '每10s拉取一次任务',
     `max_processing_time` int(11)                                          DEFAULT '0' COMMENT '处于执行中的最大时间',
     `max_retry_num`       int(11)                                          DEFAULT '0' COMMENT '最大重试次数',
     `retry_interval`      int(11)                                          DEFAULT NULL COMMENT '重试间隔',
@@ -49,8 +50,8 @@ CREATE TABLE `t_schedule_pos`
 (
     `id`                 bigint(20)                                                    NOT NULL AUTO_INCREMENT,
     `task_type`          varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-    `schedule_begin_pos` int(11)                                                       NOT NULL DEFAULT '0' COMMENT '调度开始于几号表',
-    `schedule_end_pos`   int(11)                                                       NOT NULL DEFAULT '0' COMMENT '调度结束于几号表',
+    `schedule_begin_pos` int(11)                                                       NOT NULL DEFAULT '0' COMMENT '从几号表拉取任务',
+    `schedule_end_pos`   int(11)                                                       NOT NULL DEFAULT '0' COMMENT '从几号表创建任务',
     `create_time`        bigint,
     `modify_time`        bigint,
     PRIMARY KEY (`id`),

@@ -16,7 +16,7 @@
     </resultMap>
 
     <insert id="save"
-            parameterType="com.tyh.flowsvr.data.AsyncFlowTask"
+            parameterType="com.tyh.flowsvr.data.AsyncTask"
             useGeneratedKeys="true" keyProperty="id">
         insert into t_schedule_pos (`task_type`,
                                     `data_begin_pos`,
