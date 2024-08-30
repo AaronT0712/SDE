@@ -1,5 +1,7 @@
 package com.tyh.aaron.boot;
 
+import com.tyh.aaron.lock.LockParam;
+import com.tyh.aaron.lock.RedisLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tyh.aaron.Client.TaskFlower;
@@ -77,6 +79,7 @@ public class AppLaunch implements Launch{
         ScheduleConfig scheduleConfig = scheduleCfgDic.get(taskType.getSimpleName());
         // 如果用户没有配置时间间隔就使用默认时间间隔
         intervalTime = scheduleConfig.getSchedule_interval() == 0 ? TaskConstant.DEFAULT_TIME_INTERVAL * 1000L : scheduleConfig.getSchedule_interval() * 1000L;
+        // 开启一个线程，专门调用占据任务
         this.threadPoolExecutor = new ThreadPoolExecutor(concurrentRunTimes, MaxConcurrentRunTimes, intervalTime + 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>(UserConfig.QUEUE_SIZE));
         for(;;) {
             if (UserConfig.QUEUE_SIZE - threadPoolExecutor.getQueue().size() >= scheduleLimit) {
@@ -98,18 +101,18 @@ public class AppLaunch implements Launch{
     }
 
     public void execute(Class<?> taskType) {
-        List<AsyncTaskBase> asyncTaskBaseList = scheduleTask(taskType);
+        List<AsyncTaskBase> asyncTaskBaseList = scheduleTask(taskType); // 拉取任务列表
         if (asyncTaskBaseList == null) {
             return;
         }
         int size = asyncTaskBaseList.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {    // For 循环并发
             int finalI = i;
             threadPoolExecutor.execute(() -> executeTask(asyncTaskBaseList, finalI));
         }
     }
 
-    // 拉取任务
+    // 拉取任务 
     private List<AsyncTaskBase> scheduleTask(Class<?> taskType) {
         try {
             // 开始执行时，做点事，这里就是简单的打印了一句话，供后续扩展使用
@@ -131,7 +134,7 @@ public class AppLaunch implements Launch{
     private void executeTask(List<AsyncTaskBase> asyncTaskBaseList, int i) {
         AsyncTaskBase v = asyncTaskBaseList.get(i);
         try {
-            // 执行前干点事，这里就打印了一句话，后续可以扩展
+            // 执行任务前的处理 (Pre-processing)
             observerManager.wakeupObserver(ObserverType.onExecute, v);
         } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
@@ -172,15 +175,15 @@ public class AppLaunch implements Launch{
     }
 
     private List<AsyncTaskBase> getAsyncTaskBases(ObserverManager observerManager, Class<?> taskType) {
-// 分布式锁的参数
-        //        LockParam lockParam = new LockParam(LOCK_KEY);
+        // 分布式锁的参数
+        LockParam lockParam = new LockParam(LOCK_KEY);
         // 分布式锁
-//        RedisLock redisLock = new RedisLock(lockParam);
+        RedisLock redisLock = new RedisLock(lockParam);
         List<AsyncTaskReturn> taskList = null;
         try {
             // 上锁
-         //   if (redisLock.lock()) {
-            // 调用http请求接口
+            if (redisLock.lock()) {
+                // 调用http请求接口
                 taskList = taskFlower.getTaskList(taskType, TaskStatus.PENDING.getStatus(), scheduleCfgDic.get(taskType.getSimpleName()).getSchedule_limit());
                 if (taskList == null || taskList.size() == 0) {
                     logger.warn("no task to deal!");
@@ -193,14 +196,14 @@ public class AppLaunch implements Launch{
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-       //     }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        finally {
-        // 释放锁
-//            redisLock.unlock();
-//        }
+        finally {
+            // 释放锁
+            redisLock.unlock();
+        }
 
         return null;
     }

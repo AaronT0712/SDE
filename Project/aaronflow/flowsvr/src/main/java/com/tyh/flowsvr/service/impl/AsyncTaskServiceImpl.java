@@ -47,6 +47,7 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
     public <T> ReturnStatus<T> createTask(AsyncTaskRequest asyncTaskRequest) {
         AaronFlowClientData aaronFlowClientData = getAsyncFlowClientData(asyncTaskRequest);
         TSchedulePos taskPos = null;
+        // 检查参数
         try {
             taskPos = tSchedulePosDao.getTaskPos(aaronFlowClientData.getTask_type());
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
             logger.error("db.TaskPosNsp.GetTaskPos failed.");
         }
         String tableName = getTableName(taskPos.getScheduleEndPos(), aaronFlowClientData.getTask_type());
-
+        // 获取任务配置
         ScheduleConfig taskTypeCfg;
         try {
             taskTypeCfg = scheduleConfigDao.getTaskTypeCfg(aaronFlowClientData.getTask_type());
@@ -64,12 +65,12 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
             logger.error("Visit t_task_type_cfg error");
             return ErrorStatusReturn.ERR_GET_TASK_SET_POS_FROM_DB;
         }
-
+        // 生成TaskID, 根据配置表, 填充 AsyncTask的信息, 调用 iBatis插入数据 (tableName: 要插入的表名称)
         AsyncTask asyncTask = new AsyncTask();
         String taskId = getTaskId(aaronFlowClientData.getTask_type(), taskPos.getScheduleEndPos(), tableName);
         try {
             fillTaskModel(aaronFlowClientData, asyncTask, taskId, taskTypeCfg);
-            aaronFlowTaskDao.create(tableName, asyncTask);
+            aaronFlowTaskDao.create(tableName, asyncTask);  // iBatis插入数据库
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("create task error");
@@ -77,9 +78,11 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
 
         }
         TaskResult taskResult = new TaskResult(taskId);
+        // 回包
         return new ReturnStatus(taskResult);
     }
 
+    // 用 SnowFlake 生成uuid, 后面粘贴 任务类型 + 任务表名
     private String getTaskId(String taskType, int taskPos, String tableName) {
         return Utils.getTaskId() + "_" + taskType + "_" + tableName() + "_" + taskPos;
     }
@@ -103,13 +106,14 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
 
     @Override
     public <T> ReturnStatus<T> holdTask(String taskType, int status, int limit) {
-        // 不能超过最大数
+        // 检查参数
         if (limit > Task.MAX_TASK_LIST_LIMIT) {
             limit = Task.MAX_TASK_LIST_LIMIT;
         }
         if (limit == 0) {
             limit = Task.DEFAULT_TASK_LIST_LIMIT;
         }
+        // 查看目前从，哪一个表拿取任务
         TSchedulePos taskPos;
         try {
             taskPos = tSchedulePosDao.getTaskPos(taskType);
@@ -118,6 +122,7 @@ public class AsyncTaskServiceImpl implements AsyncTaskService {
             return ErrorStatusReturn.ERR_GET_TASK_SET_POS_FROM_DB;
         }
         String tableName = getTableName(taskPos.getScheduleBeginPos(), taskType);
+        // 根据表名，拉取一批任务
         List<AsyncTask> taskList;
         try {
             taskList = aaronFlowTaskDao.getTaskList(taskType, status, limit, tableName);

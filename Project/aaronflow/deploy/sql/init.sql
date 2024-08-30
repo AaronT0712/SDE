@@ -6,7 +6,7 @@ CREATE TABLE `t_lark_task_1`
     `user_id`            varchar(256) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
     `task_id`            varchar(256) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
     `task_type`          varchar(128) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
-    `task_stage`         varchar(128) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '',
+    `task_stage`         varchar(128) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '用户自己定义任务阶段，每个阶段都有4个Status',
     `status`             tinyint(3) unsigned                      NOT NULL DEFAULT '0' COMMENT '1等待中-2执行中-3成功-4失败',
     `priority`           int(11)                                  NOT NULL DEFAULT '0' COMMENT '优先级',
     `crt_retry_num`      int(11)                                  NOT NULL DEFAULT '0' COMMENT '已经重试几次了',
