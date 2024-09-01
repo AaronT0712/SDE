@@ -8,4 +8,9 @@
    backtrack(new ArrayList<>(), 1, ans, n, k);	// 下一次就是 1 变成 2
    ```
 
-4. 
+4. 跳过已重复的点，需要两个要求：
+
+   - 已经排序
+   - if (i != start && nums[i] == nums[i-1])
+
+5. 对于permutation来说，甚至不需要 startIndex, 一个全局set[] 既可避免重复；
