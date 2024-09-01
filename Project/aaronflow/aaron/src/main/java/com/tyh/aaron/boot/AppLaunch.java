@@ -85,6 +85,7 @@ public class AppLaunch implements Launch{
             if (UserConfig.QUEUE_SIZE - threadPoolExecutor.getQueue().size() >= scheduleLimit) {
                 execute(taskType);
             }
+            // 设置 随机的额外休眠时间，防止Aaron长时间没有任务 (这是种资源浪费)
             try {
                 Thread.sleep(intervalTime + (int)(Math.random() * 500));
             } catch (InterruptedException e) {
@@ -112,7 +113,7 @@ public class AppLaunch implements Launch{
         }
     }
 
-    // 拉取任务 
+    // 拉取任务
     private List<AsyncTaskBase> scheduleTask(Class<?> taskType) {
         try {
             // 开始执行时，做点事，这里就是简单的打印了一句话，供后续扩展使用
