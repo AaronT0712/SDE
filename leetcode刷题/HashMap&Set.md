@@ -36,7 +36,7 @@
    map.size();
    
    Set<String> set = new HashSet<>();
-   set.add(); 
+   set.add(); set.remove();
    map.contains();
    set.size();
    ```
