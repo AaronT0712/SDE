@@ -38,9 +38,16 @@
 
 - [ ] Oracle
 
+  - **Software Engineer - OCI (Seattle, WA)**: https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/255984/?location=United+States&locationId=300000000149325&selectedFlexFieldsFacets=%2522AttributeChar16%257CCampusSoftware%2522
+  - **Software Engineer - Analytics Cloud**: https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/255975/?location=United+States&locationId=300000000149325&selectedFlexFieldsFacets=%2522AttributeChar16%257CCampusSoftware%2522
+  - **Software Engineer - Corporate Architecture**: https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/jobsearch/job/255948/?location=United+States&locationId=300000000149325&selectedFlexFieldsFacets=%2522AttributeChar16%257CCampusSoftware%2522
+
 - [ ] Microsoft
 
 - [ ] Snapchat
+
+  - **Quality Engineer, 1+ Years of Experience**: https://wd1.myworkdaysite.com/recruiting/snapchat/snap/job/Los-Angeles-California/Quality-Engineer--1--Years-of-Experience_R0036546?lang=en-US
+    (问问校招)
 
 - [ ] Twitter
 
