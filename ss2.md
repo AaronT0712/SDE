@@ -15,7 +15,7 @@
   - **Software Engineer III, Google Distributed Cloud Hosted**: https://www.google.com/about/careers/applications/jobs/results/96325505401135814-software-engineer-iii/?src=Online/LinkedIn/linkedin_us&utm_source=linkedin&utm_medium=jobposting&utm_campaign=contract
   - **Software Developer II, Site Reliability Developing, Google Cloud**: https://www.google.com/about/careers/applications/jobs/results/122149112970650310-software-developer-ii/?src=Online/LinkedIn/linkedin_us&utm_source=linkedin&utm_medium=jobposting&utm_campaign=contract
   
-- [ ] Amazon
+- [ ] Amazon (这个先不用内推)
 
   - **Software Dev Engineer (AI/ML)**: https://www.amazon.jobs/en/jobs/2723727/software-dev-engineer-ai-ml
   - **Software Development Engineer - 2024 (US)**: https://www.amazon.jobs/en/jobs/2644301/software-development-engineer-2024-us
@@ -51,10 +51,16 @@
 
 - [ ] Twitter
 
+  - **Software Engineer - Data Engineering (ML Platform)**: https://twitter.wd5.myworkdayjobs.com/X/job/Palo-Alto-CA/Software-Engineer---Data-Engineering--ML-Platform-_R100045?source=XCareers
+  - **Software Engineer - Compute**: https://twitter.wd5.myworkdayjobs.com/X/job/New-York-City-NY/Software-Engineer---Compute_R100077?source=XCareers
+  - **Software Engineer - Core Services**: https://twitter.wd5.myworkdayjobs.com/X/job/New-York-City-NY/Senior-Staff-Software-Engineer---Core-Services_R100062?source=XCareers
+
 - [ ] Airbnb
 
 - [ ] Bloomberg
 
 - [ ] Dropbox
 
-- [ ] TikTok
+- [ ] TikTok =
+
+- [ ] 
