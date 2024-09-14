@@ -21,4 +21,14 @@
    return prev;	// 注意嗷！
    ```
    
-   
+3. Reverse **[M, N]** 处的节点！！！
+   <img src="./assets/image-20240913231222152.png" alt="image-20240913231222152" style="zoom:50%;" />
+
+- 最后返回 **Dummy.next**即可；
+
+4. Reverse (**N个N个节点来**)
+   <img src="./assets/image-20240913231351270.png" alt="image-20240913231351270" style="zoom:67%;" />
+
+- 注意，**P0的位置！！ 下一个P0 是，没有发生更改的 P0.next!!!!**
+- 其它的就是基于上一个做法的了
+- 
