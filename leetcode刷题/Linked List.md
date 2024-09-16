@@ -31,4 +31,28 @@
 
 - 注意，**P0的位置！！ 下一个P0 是，没有发生更改的 P0.next!!!!**
 - 其它的就是基于上一个做法的了
-- 
+
+5. LRU 做法 （**双向链表**）
+
+   - **插入**
+     <img src="./assets/image-20240915163425745.png" alt="image-20240915163425745" style="zoom:80%;" />
+
+     ```java
+     ListNode newNode;	// 假设已经初始化
+     newNode.pre = leftNode;
+     newNode.next = rightNode;
+     
+     leftNode.next.pre = newNode;
+     leftNode.next = newNode;
+     ```
+
+   - **删除**
+     <img src="./assets/image-20240915163639317.png" alt="image-20240915163639317" style="zoom:80%;" />
+
+     ```java
+     // 假设 removeNode 已经连接好了
+     removeNode.prev.next = removeNode.next;
+     removeNode.next.prev = removeNode.prev;
+     ```
+
+   - 
