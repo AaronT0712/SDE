@@ -1,14 +1,6 @@
-+ **Situation: **During my Year 2 project in UK(Junior year)
+## 关于Features的Conflicts
 
-+ **Objective: **Build a navigation helmet based on Arduino, and user would be able to reach destination with GPS module.
-
-+ **Details: ** We were in group of 3. At the begining of the project, everything was fine. We received several of components ordered a week ago and successfully deploy our initial code in our developing board. Though we met some difficulties in the circuit part, we still followed our plan and believed that we were in the right track.
-  After receiving the essential components and assembling them together, we found that the geometic information was totally wrong. We showed the GPS data in a map and realized that it was flying around like bullets. After researching, we found that it was because the lack of GPS signal.
-
-  One of my teammate said we should buy a more power GPS module. However, I didn't think this is feasible because of the potential logistic issue caused by the pandemic. My plan was utilizing the remaining accelerators in the lab and combine them with GPS together to get a more precise location data. But it was quite a challenge for us because we didn't got experience before and we didn't whether it could be finished before deadline.
-
-  Three of us cannot decide which plan to perform though we didn't have much time, and we couldn't decide it. So I suggest that we should list the props and cons of each plan after evaluation in-group. Then we turn the evaluation to our advisor and other facilitors in our departments for advice and feasibility. Fortunately my plan works but it required further improvement. 
-
-+ **Result: **
-
-+ **What I've learned: **
++ **Situation**: During the development of the *Online Snake Game & Leaderboard*, our team of six disagreed about the scoring algorithm. Some members wanted to implement a **simple scoring system**, where points were awarded for each food item consumed. I, along with a few others, proposed a **more complex scoring system** that would factor in player actions, time, and difficulty level to make the game more engaging and competitive.
++ **Task**: As the team lead, I needed to mediate the discussion and ensure that we came to a decision that balanced the technical feasibility with our project timeline, while also creating an engaging experience for players.
++ **Action**: I organized a meeting where everyone could share their views and concerns. To bridge the gap, I proposed starting with a simpler scoring system to meet deadlines but leaving room for future updates that could incorporate more dynamic elements, such as difficulty-based scoring and time bonuses. We also conducted a quick survey of potential users to gather feedback on which scoring approach they found more engaging.
++ **Result**: This compromise allowed us to complete the project on time with a solid foundation. The simpler scoring system was implemented successfully, and we received positive feedback from users. Additionally, we left flexibility in the code to easily introduce more complex features in later versions, keeping both the technical team and end users satisfied. This approach led to high user engagement with the leaderboard feature becoming one of the game’s highlights.
