@@ -1,3 +1,4 @@
+@Data
 public class BlackJack {
     private List<Player> players;
     private Dealer dealer;
