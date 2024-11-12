@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: user-center
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tyh
+    username: root
+    password: 123456
+  mybatis-plus:
+    type-aliases-package: com.tyh.usercenter.model
+
+
+server:
+  port: 8080
+
+# Mybatis Database
+
+
