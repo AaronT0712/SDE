@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 */
 public interface UserService extends IService<User> {
     /**
-     *
+     * 用户注册
      * @param user_account 用户账户
      * @param user_password 用户密码
      * @param check_code 校验密码i
@@ -20,10 +20,10 @@ public interface UserService extends IService<User> {
     long user_register(String user_account, String user_password, String check_code);
 
     /**
-     *
+     * 用户登录
      * @param user_account
      * @param user_password
-     * @return
+     * @return 脱敏后的用户
      */
     User user_login(String user_account, String user_password, HttpServletRequest request);
 }

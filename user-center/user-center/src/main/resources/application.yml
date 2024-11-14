@@ -6,12 +6,23 @@ spring:
     url: jdbc:mysql://localhost:3306/tyh
     username: root
     password: 123456
-  mybatis-plus:
-    type-aliases-package: com.tyh.usercenter.model
-
+  # session 失效时间
+  session:
+    timeout: 86400
 
 server:
   port: 8080
+
+mybatis-plus:
+  configuration:
+    map_underscore-to-camel-case: false
+  global-config:
+    db-config:
+      logic-delete-field: is_delete # DB中哪一个字段表示逻辑删除
+      logic-delete-value: 1 # 逻辑已删除 (默认为1)
+      logic-not-delete-value: 0 # 逻辑未删除 (默认为0)
+
+
 
 # Mybatis Database
 

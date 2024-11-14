@@ -1,4 +1,5 @@
 package com.tyh.usercenter.service.impl;
+import java.util.Date;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,6 +18,9 @@ import java.security.MessageDigest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.tyh.usercenter.constant.UserConstant.NORMAL_ROLE;
+import static com.tyh.usercenter.constant.UserConstant.USER_LOGIN_STATE;
+
 /**
  * @author aaron
  * @description 针对表【user(用户)】的数据库操作Service实现
@@ -30,7 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private UserMapper userMapper;
 
-    private static final String SALT = "tyh";   // 盐来混淆
+    private static final String SALT = "tyh";   // 盐来混淆加密
 
     @Override
     public long user_register(String user_account, String user_password, String check_code) {
@@ -110,10 +114,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;                                                            // 不会反映给前端
         }
 
-        // 3. 记录用户的登录状态
+        // 3. 信息脱敏: 隐藏敏感信息，防止数据库字段泄露 (密码什么的就不返回给前端了)
+        User safety_user = new User();
+        safety_user.setId(user_found.getId());
+        safety_user.setUser_name(user_found.getUser_name());
+        safety_user.setUser_account(user_found.getUser_account());
+        safety_user.setAvatar_url(user_found.getAvatar_url());
+        safety_user.setGender(user_found.getGender());
+        safety_user.setPhone(user_found.getPhone());
+        safety_user.setEmail(user_found.getEmail());
+        safety_user.setUser_role(user_found.getUser_role());
+        safety_user.setUser_status(user_found.getUser_status());
+        safety_user.setCreate_time(user_found.getCreate_time());
 
-        // 4. 返回用户
-        return null;
+        // 4. 记录用户的登录状态
+        request.getSession().setAttribute(USER_LOGIN_STATE, safety_user);    // attribute使用 map保存的，键值对
+
+        // 5. 返回用户
+        return safety_user;
     }
 }
 
