@@ -57,6 +57,7 @@ const store = useStore();
 setTimeout(() => {
   store.dispatch("user/getLoginUser", {
     userName: "TYH",
+    role: "admin",
   });
 }, 3000);
 </script>
