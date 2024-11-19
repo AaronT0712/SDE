@@ -1,9 +1,9 @@
 import { createStore } from "vuex";
 
 export default createStore({
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {},
-  modules: {},
+  // state: {}, // 保存的全局状态
+  // getters: {},
+  // mutations: {},
+  // actions: {},
+  // modules: {},
 });
