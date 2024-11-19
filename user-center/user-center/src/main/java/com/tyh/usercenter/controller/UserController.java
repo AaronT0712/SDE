@@ -1,6 +1,8 @@
 package com.tyh.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.tyh.usercenter.common.BaseResponse;
+import com.tyh.usercenter.common.ResultUtils;
 import com.tyh.usercenter.model.domain.User;
 import com.tyh.usercenter.model.domain.request.UserLoginRequest;
 import com.tyh.usercenter.model.domain.request.UserRegisterRequest;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.tyh.usercenter.constant.UserConstant.ADMIN_ROLE;
 import static com.tyh.usercenter.constant.UserConstant.USER_LOGIN_STATE;
@@ -34,7 +37,7 @@ public class UserController {
      * @return user_id
      */
     @PostMapping("/register")
-    public Long user_register(@RequestBody UserRegisterRequest userRegisterRequest) {   // 和前端传来的参数对应
+    public BaseResponse<Long> user_register(@RequestBody UserRegisterRequest userRegisterRequest) {   // 和前端传来的参数对应
         if (userRegisterRequest == null) {
             return null;
         }
@@ -47,7 +50,10 @@ public class UserController {
             return null;
         }
 
-        return userService.user_register(userAccount, userPassword, checkCode);
+        long result = userService.user_register(userAccount, userPassword, checkCode);
+
+        // return new BaseResponse<>(0, "ok", result); // 封账返回的结果
+        return ResultUtils.success(result);
     }
 
     /**
@@ -57,7 +63,7 @@ public class UserController {
      * @return 脱敏后的用户
      */
     @PostMapping("/login")
-    public User user_login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<User> user_login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             return null;
         }
@@ -69,7 +75,10 @@ public class UserController {
             return null;
         }
 
-        return userService.user_login(userAccount, userPassword,request);
+        User result = userService.user_login(userAccount, userPassword, request);
+
+        // return new BaseResponse<>(0, "ok", result);
+        return ResultUtils.success(result);
     }
 
     /**
@@ -80,7 +89,7 @@ public class UserController {
      * @return 模糊查询到的List
      */
     @GetMapping("/search")
-    public List<User> search_user(String user_name, HttpServletRequest request) {
+    public BaseResponse<List<User>> search_user(String user_name, HttpServletRequest request) {
         // 仅管理员可查询
         if (!isAdmin(request)) {
             return new ArrayList<>();
@@ -91,7 +100,13 @@ public class UserController {
             queryWrapper.like("user_name", user_name);  // like表示模糊查询
         }
 
-        return userService.list(queryWrapper);  //
+        // 获得的用户列表，脱敏
+        List<User> userList = userService.list(queryWrapper);
+        userList = userList.stream().map(user ->
+            userService.getSafetyUser(user)
+        ).collect(Collectors.toList());
+
+        return ResultUtils.success(userList);
     }
 
     /**
@@ -102,7 +117,7 @@ public class UserController {
      * @return 删除结果
      */
     @PostMapping("/delete")
-    public boolean delete_user(@RequestBody long id, HttpServletRequest request) {
+    public BaseResponse<Boolean> delete_user(@RequestBody long id, HttpServletRequest request) {
         // 仅管理员可删除
         if (!isAdmin(request)) {
             return false;
@@ -111,9 +126,10 @@ public class UserController {
         if (id <= 0) {
             return false;
         }
-        return userService.removeById(id);
-    }
+        boolean result = userService.removeById(id);
 
+        return ResultUtils.success(result);
+    }
 
     /**
      * 判断是否为管理员
@@ -129,4 +145,33 @@ public class UserController {
         return true;
     }
 
+    /**
+     * 获取当前用户
+     * @param request
+     * @return 数据库中的用户 + 脱敏处理
+     */
+    @GetMapping("/current")
+    public BaseResponse<User> get_current_user(HttpServletRequest request) {
+        // 从session中，就可以获取登录信息 (和检查管理员相似)
+        Object userObject = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObject;
+        if (currentUser == null) {
+            return null;
+        }
+        // 可能数据库的信息容易改动，和本地存储的不同
+        long userId = currentUser.getId();
+        // TODO 校验用户是否合法
+        currentUser = userService.getById(userId); // 数据库重新获取
+        // return userService.getSafetyUser(currentUser);  // 脱敏
+        return ResultUtils.success(userService.getSafetyUser(currentUser));
+    }
+
+    @PostMapping("/logout")
+    public BaseResponse<Integer> user_logout(HttpServletRequest request) {
+        if (request == null) {return null;}
+
+        int result = userService.user_logout(request);
+
+        return ResultUtils.success(result);
+    }
 }

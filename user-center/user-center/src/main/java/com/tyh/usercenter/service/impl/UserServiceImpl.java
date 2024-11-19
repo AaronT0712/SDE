@@ -115,7 +115,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         // 3. 信息脱敏: 隐藏敏感信息，防止数据库字段泄露 (密码什么的就不返回给前端了)
+        User safety_user = getSafetyUser(user_found);
+
+        // 4. 记录用户的登录状态
+        request.getSession().setAttribute(USER_LOGIN_STATE, safety_user);    // attribute使用 map保存的，键值对
+
+        // 5. 返回用户
+        return safety_user;
+    }
+
+    /**
+     * 脱敏操作
+     * @param user_found
+     * @return 脱敏后的用户
+     */
+    public User getSafetyUser(User user_found) {
+        // 先做校验
+        if (user_found == null) {return null;}
+
         User safety_user = new User();
+
         safety_user.setId(user_found.getId());
         safety_user.setUser_name(user_found.getUser_name());
         safety_user.setUser_account(user_found.getUser_account());
@@ -127,12 +146,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safety_user.setUser_status(user_found.getUser_status());
         safety_user.setCreate_time(user_found.getCreate_time());
 
-        // 4. 记录用户的登录状态
-        request.getSession().setAttribute(USER_LOGIN_STATE, safety_user);    // attribute使用 map保存的，键值对
-
-        // 5. 返回用户
         return safety_user;
     }
+
+
+    @Override
+    public int user_logout(HttpServletRequest request) {
+        request.getSession().removeAttribute(USER_LOGIN_STATE); // session可以看做一个字典，这样移除就好
+        Object attribute = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User current_user = (User) attribute;
+        if (current_user == null) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
 }
 
 
