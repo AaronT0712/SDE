@@ -1,5 +1,5 @@
 <template>
-  <a-row id="globalHeader" class="grid-demo" style="margin-bottom: 16px">
+  <a-row id="globalHeader" style="margin-bottom: 16px" align="center">
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -22,7 +22,9 @@
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <div>TYH</div>
+      <div>
+        {{ store.state.user?.loginUser?.userName ?? 未登录 }}
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -31,6 +33,7 @@
 import { routes } from "../router/routes";
 import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
+import { useStore } from "vuex";
 
 const router = useRouter();
 const route = useRoute();
@@ -46,6 +49,16 @@ router.afterEach((to, from, next) => {
 const doMenuClick = (key: string) => {
   router.push({ path: key });
 };
+
+// 获取用户登录信息 (保存在vuex中)
+const store = useStore();
+
+// 测试登录状态变化
+setTimeout(() => {
+  store.dispatch("user/getLoginUser", {
+    userName: "TYH",
+  });
+}, 3000);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -24,8 +24,8 @@
 }
 
 #basicLayout .header {
-  background: red;
-  margin-bottom: 16px;
+  margin-bottom: 13px;
+  box-shadow: #eee 1px 1px 1px;
 }
 
 #basicLayout .content {

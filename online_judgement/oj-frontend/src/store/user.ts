@@ -1,34 +1,21 @@
-// // initial state
-// import { StoreOptions } from "vuex";
-//
-// // Initial State
-// const state = () => ({
-//   loginUser: {
-//     userName: "TYH-未登录",
-//   },
-// });
-//
-// // Getter
-// const getters = {};
-//
-// // Actions
-// const action = {
-//   getLoginUser({ commit, state }, payload) {
-//     commit("updateUser", { userName: "TYH" });
-//   },
-// };
-//
-// // Mutation
-// const mutation = {
-//   updateUser(state, payload) {
-//     state.loginUser = payload;
-//   },
-// };
-//
-// export default {
-//   namespaced: true,
-//   state,
-//   getters,
-//   action,
-//   mutation,
-// };
+import { StoreOptions } from "vuex";
+
+export default {
+  namespaced: true,
+  state: () => ({
+    loginUser: {
+      userName: "未登录",
+    },
+  }),
+  actions: {
+    // TODO: 改成从远程请求，获取登录信息
+    getLoginUser({ commit, state }, payload) {
+      commit("updateUser", { userName: "TYH" });
+    },
+  },
+  mutations: {
+    updateUser(state, payload) {
+      state.loginUser = payload;
+    },
+  },
+} as StoreOptions<any>;

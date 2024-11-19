@@ -33,8 +33,4 @@ public class BaseResponse<T> implements Serializable {  // 泛型
     public BaseResponse(int code, T data) {
         this(code, "", data, "");
     }
-
-    public BaseResponse(ErrorCode errorCode) {
-        this
-    }
 }
