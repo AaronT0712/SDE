@@ -1,5 +1,5 @@
 <template>
-  <a-row id="globalHeader" style="margin-bottom: 16px" align="center">
+  <a-row id="globalHeader" align="center" :wrap="false">
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -16,7 +16,8 @@
             <div class="headerTitle">Online Judgement</div>
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in routes" :key="item.path">
+        <!--遍历routes的页面，然后展示出来-->
+        <a-menu-item v-for="item in visibleRoutes" :key="item.path">
           {{ item.name }}
         </a-menu-item>
       </a-menu>
@@ -32,34 +33,57 @@
 <script setup lang="ts">
 import { routes } from "../router/routes";
 import { useRouter, useRoute } from "vue-router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
-
-const router = useRouter();
-const route = useRoute();
+import checkAccess from "@/access/checkAccess";
+import ACCESS_ENUM from "@/access/accessEnum";
 
 // 默认主页
 const selectedKeys = ref(["/"]);
+
+// 获取路由文件
+const router = useRouter();
+const route = useRoute();
+// 获取用户登录信息 (保存在vuex中)
+const store = useStore();
+
+const loginUser = store.state.user.loginUser;
+
+// 展示在菜单的路由数组
+const visibleRoutes = computed(() => {
+  return routes.filter((item, index) => {
+    if (item.meta?.hideInMenu) {
+      return false;
+    }
+
+    // 获取当前用户登陆状态
+    const loginUser = store.state.user.loginUser;
+
+    // 根据权限过滤菜单loginUser
+    if (!checkAccess(loginUser, item?.meta?.access as string)) {
+      return false;
+    }
+    return true;
+  });
+});
 
 // 路由跳转时，更新选中的菜单项
 router.afterEach((to, from, next) => {
   selectedKeys.value = [to.path];
 });
 
+// 点击菜单，根据路由跳转
 const doMenuClick = (key: string) => {
   router.push({ path: key });
 };
-
-// 获取用户登录信息 (保存在vuex中)
-const store = useStore();
 
 // 测试登录状态变化
 setTimeout(() => {
   store.dispatch("user/getLoginUser", {
     userName: "TYH",
-    role: "admin",
+    userRole: ACCESS_ENUM.ADMIN,
   });
-}, 3000);
+}, 1000);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
