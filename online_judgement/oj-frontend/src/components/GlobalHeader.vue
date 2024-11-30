@@ -78,12 +78,12 @@ const doMenuClick = (key: string) => {
 };
 
 // 测试登录状态变化
-setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "TYH",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
-}, 1000);
+// setTimeout(() => {
+//   store.dispatch("user/getLoginUser", {
+//     userName: "TYH",
+//     userRole: ACCESS_ENUM.ADMIN,
+//   });
+// }, 1000);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
