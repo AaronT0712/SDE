@@ -1,18 +1,17 @@
-package com.tyh.oj.model.entity;
+package com.tyh.oj.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.tyh.oj.model.dto.question.JudgeConfig;
 
-import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
- * 题目
- * @TableName question
+ * 题目封装类
+ * 作用: 专门返回给前端，并在此过程中，过滤sensitive info
  */
-@TableName(value ="question")
-@Data
-public class Question implements Serializable {
+public class QuestionVO {
     /**
      * id
      */
@@ -32,12 +31,7 @@ public class Question implements Serializable {
     /**
      * 标签列表（json 数组）
      */
-    private String tags;
-
-    /**
-     * 题目答案
-     */
-    private String answer;
+    private List<String> tags;
 
     /**
      * 题目提交数
@@ -48,11 +42,6 @@ public class Question implements Serializable {
      * 题目通过数
      */
     private Integer acceptedNum;
-
-    /**
-     * 判题用例（json 数组）
-     */
-    private String judgeCase;
 
     /**
      * 判题配置（json 对象）
@@ -84,12 +73,5 @@ public class Question implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic // 可加可不加，在application.yml里面配置也行
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
