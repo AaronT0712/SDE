@@ -10,10 +10,7 @@ import com.tyh.oj.common.ResultUtils;
 import com.tyh.oj.constant.UserConstant;
 import com.tyh.oj.exception.BusinessException;
 import com.tyh.oj.exception.ThrowUtils;
-import com.tyh.oj.model.dto.question.QuestionAddRequest;
-import com.tyh.oj.model.dto.question.QuestionEditRequest;
-import com.tyh.oj.model.dto.question.QuestionQueryRequest;
-import com.tyh.oj.model.dto.question.QuestionUpdateRequest;
+import com.tyh.oj.model.dto.question.*;
 import com.tyh.oj.model.entity.Question;
 import com.tyh.oj.model.entity.User;
 import com.tyh.oj.model.vo.QuestionVO;
@@ -54,6 +51,7 @@ public class QuestionController {
 
     /**
      * 创建
+     * 原理：获取请求的每个属性，处理后，放入Question
      *
      * @param questionAddRequest
      * @param request
@@ -66,17 +64,31 @@ public class QuestionController {
         }
         Question question = new Question();
         BeanUtils.copyProperties(questionAddRequest, question);
+        // tags
         List<String> tags = questionAddRequest.getTags();
         if (tags != null) {
             question.setTags(GSON.toJson(tags));
         }
+        // Judge cases & configs
+        List<JudgeCase> judgeCases = questionAddRequest.getJudgeCase();
+        if (judgeCases != null) {
+            question.setJudgeCase(GSON.toJson(judgeCases));
+        }
+        JudgeConfig judgeConfigs = questionAddRequest.getJudgeConfig();
+        if (judgeConfigs != null) {
+            question.setJudgeConfig(GSON.toJson(judgeConfigs));
+        }
+        // Check if the question formed is valid
         questionService.validQuestion(question, true);
+        // Store the creator's message
         User loginUser = userService.getLoginUser(request);
         question.setUserId(loginUser.getId());
         question.setFavourNum(0);
         question.setThumbNum(0);
+        // get the save result
         boolean result = questionService.save(question);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        // return the id of that question
         long newQuestionId = question.getId();
         return ResultUtils.success(newQuestionId);
     }
@@ -197,22 +209,6 @@ public class QuestionController {
 
     // endregion
 
-    /**
-     * 分页搜索（从 ES 查询，封装类）
-     *
-     * @param questionQueryRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/search/page/vo")
-    public BaseResponse<Page<QuestionVO>> searchQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
-                                                                 HttpServletRequest request) {
-        long size = questionQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> questionPage = questionService.searchFromEs(questionQueryRequest);
-        return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
-    }
 
     /**
      * 编辑（用户）

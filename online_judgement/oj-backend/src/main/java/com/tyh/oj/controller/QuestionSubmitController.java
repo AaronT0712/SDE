@@ -4,12 +4,14 @@ import com.tyh.oj.common.BaseResponse;
 import com.tyh.oj.common.ErrorCode;
 import com.tyh.oj.common.ResultUtils;
 import com.tyh.oj.exception.BusinessException;
-import com.tyh.oj.model.dto.question.QuestionSubmitAddRequest;
+import com.tyh.oj.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.tyh.oj.model.entity.User;
 import com.tyh.oj.service.QuestionSubmitService;
 import com.tyh.oj.service.UserService;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 帖子点赞接口
+ * 题目提交
  *
  * @author tyh
  */
@@ -33,22 +35,22 @@ public class QuestionSubmitController {
     private UserService userService;
 
     /**
-     * 点赞 / 取消点赞
+     * 提交题目
      *
      * @param questionSubmitAddRequest
      * @param request
      * @return resultNum 本次点赞变化数
      */
     @PostMapping("/")
-    public BaseResponse<Integer> doSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
-                                         HttpServletRequest request) {
+    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+                                                  HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // 登录才能点赞
         final User loginUser = userService.getLoginUser(request);
         long questionId = questionSubmitAddRequest.getQuestionId();
-        int result = questionSubmitService.doQuestionSubmit(questionId, loginUser);
+        long result = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(result);
     }
 
