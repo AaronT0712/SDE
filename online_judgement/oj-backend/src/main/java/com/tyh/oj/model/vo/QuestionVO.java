@@ -1,13 +1,17 @@
 package com.tyh.oj.model.vo;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tyh.oj.exception.BusinessException;
 import com.tyh.oj.model.dto.question.JudgeConfig;
 import com.tyh.oj.model.entity.Question;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import com.tyh.oj.common.ErrorCode;
 
 import java.util.Date;
 import java.util.List;
@@ -21,7 +25,7 @@ public class QuestionVO {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -88,9 +92,10 @@ public class QuestionVO {
 
     /**
      * 包装类转对象
+     * 将VO转化回Obj
      *
      * @param questionVO
-     * @return
+     * @return question Obj
      */
     public static Question voToObj(QuestionVO questionVO) {
         if (questionVO == null) {
@@ -99,12 +104,10 @@ public class QuestionVO {
         Question question = new Question();
         BeanUtils.copyProperties(questionVO, question);
         List<String> tagList = questionVO.getTags();
-        // 将不好处理的List<String>, 转化成Json字符串
         if (tagList != null) {
             question.setTags(JSONUtil.toJsonStr(tagList));
         }
         JudgeConfig voJudgeConfig = questionVO.getJudgeConfig();
-        // 同上
         if (voJudgeConfig != null) {
             question.setJudgeConfig(JSONUtil.toJsonStr(voJudgeConfig));
         }
@@ -126,7 +129,6 @@ public class QuestionVO {
         // 将Json，转化成String<>
         List<String> tagList = JSONUtil.toList(question.getTags(), String.class);
         questionVO.setTags(tagList);
-        // todo: 转化有问题
         String judgeConfig = question.getJudgeConfig();
         questionVO.setJudgeConfig(JSONUtil.toBean(judgeConfig, JudgeConfig.class));
         return questionVO;

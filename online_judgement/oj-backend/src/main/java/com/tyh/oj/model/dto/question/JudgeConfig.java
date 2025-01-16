@@ -1,5 +1,8 @@
 package com.tyh.oj.model.dto.question;
 
+import lombok.Data;
+
+@Data
 public class JudgeConfig {
     /**
      * 时间限制 (ms)

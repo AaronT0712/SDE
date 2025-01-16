@@ -1,5 +1,8 @@
 package com.tyh.oj.model.dto.question;
 
+import lombok.Data;
+
+@Data
 public class JudgeCase {
     /**
      * 题目输入
