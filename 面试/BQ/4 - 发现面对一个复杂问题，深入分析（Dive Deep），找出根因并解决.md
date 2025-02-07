@@ -15,10 +15,10 @@
 ------
 
 **Situation:**
-In our Flow project, I optimized the framework’s performance by adjusting the MySQL connection pool. However, during load testing with **wrk**, I observed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and performance manager, I found that there is a sudden spikes in CPU load, indicating that something deeper was affecting the system.
+It was the AaronFlow project and I finished most part of development. However, during load testing with **wrk**, I observed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using command-Line and performance manager, I found that there is a sudden spikes in CPU load, indicating that something deeper was affecting the system.
 
 **Task:**
-I was determined to uncover the  cause of these performance issues. Although I had already applied standard optimizations like setting up connection pools, I suspected that a more complex underlying issue was at play—likely on the server side—so I needed to dive deep into the system's behavior and identify the specific problem affecting CPU stability and overall performance.
+Although I had already applied standard optimizations like adjusting MySQL connection pools, there was still no significant improvement. I suspected that a more complex underlying issue was at play—likely on the server side—so I needed to dive deep into the system's behavior and identify the specific problem affecting CPU stability and overall performance.
 
 **Action:**
 
