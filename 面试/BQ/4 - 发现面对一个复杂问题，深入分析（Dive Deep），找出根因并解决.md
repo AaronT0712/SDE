@@ -12,6 +12,33 @@
 
 ​	•	**Earn Trust**（如果你在此过程中和团队/经理积极沟通，建立了信赖）
 
+------
+
+**Situation:**
+In our Flow project, I optimized the framework’s performance by adjusting the MySQL connection pool. However, during load testing with **wrk**, I observed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and performance manager, I found that there is a sudden spikes in CPU load, indicating that something deeper was affecting the system.
+
+**Task:**
+I was determined to uncover the  cause of these performance issues. Although I had already applied standard optimizations like setting up connection pools, I suspected that a more complex underlying issue was at play—likely on the server side—so I needed to dive deep into the system's behavior and identify the specific problem affecting CPU stability and overall performance.
+
+**Action:**
+
+1. **Data Gathering & Initial Hypothesis:**
+   - I started by analyzing the server’s behavior, since the worker-side (Aaron) was processing tasks rapidly without issue.
+   - After reviewing system metrics and consulting various online forums and enterprise MySQL usage guides, I identified the use of the **for-update** SQL statement as a potential issue.
+2. **Deep Technical Analysis:**
+   - I researched the inner workings of the **for-update** command and discovered that it can generate **gap locks**, which may delay query execution and affect performance. This function is also not recommended in the book *High Performance MySQL*.
+   - I then focused on the unusual CPU spikes. I observed that every time, when Aaron fetched a new task, the CPU load surged unexpectedly. This led me to dive deeper into the **for-update** and MySQL. I found that MySQL employs an automatic deadlock detection mechanism that checks for dependencies between concurrent queries—a process with a complexity O(N²). As the number of concurrent tasks increased, this mechanism significantly strained the CPU.
+3. **Implementing the Solution:**
+   - To address both the gap-lock issue and the heavy deadlock detection overhead, I devised a two-part solution:
+     - I introduced a **distributed locking mechanism** to better manage concurrent access.
+     - I implemented **randomized delays** in task invocations to spread out the load, reducing the frequency and intensity of deadlock checks.
+   - These changes were tested and iteratively refined until the performance metrics showed stable CPU usage and improved throughput.
+
+**Result:**
+The adjustments led to a significant performance improvement: CPU usage became stable under load, and the overall system throughput increased noticeably. By identifying and solving the problem of **for-update** and the deadlock detection overhead, I not only solved the immediate performance issues but also enhanced the system’s scalability for future demands.
+
+------
+
 S：在我做Flow的项目时，我通过修改MySQL的链接池，提升了框架的性能。但是我在用wrk做压力测试的时候，发现性能没有预期的这么高，而且CPU压力非常不稳定 (linux top，性能管理器查看都可以)。
 T：我很好奇这个原因，我认为我已经把常见的调优做完了，那么出现问题的，肯定是一些深入的点。
 
