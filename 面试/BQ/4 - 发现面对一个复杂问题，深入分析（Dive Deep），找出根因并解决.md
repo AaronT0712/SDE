@@ -15,25 +15,29 @@
 ------
 
 **Situation:**
-It was the AaronFlow project and I finished most part of development. However, during load testing with **wrk** (测flowsvr), I observed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and checking the performance manager, I found that there is a sudden spikes in CPU load, indicating that something deeper was affecting the system.
+It was the AaronFlow project and I finished most part of development. However, during stress testing with **wrk** (测flowsvr), I noticed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and checking the performance manager, I found that there were sudden spikes in CPU load, indicating that something deeper was affecting the system.
 
 **Task:**
-Although I had already applied standard optimizations like adjusting MySQL connection pools and the performance improved, the problem still exist. So, I thought that there was a complex underlying issue. I was curious and I decided to dive deep into this problem and identify the root cause that affecting CPU stability and overall performance.
+Although I had already applied standard optimizations like adjusting MySQL connection pools, the problem still exist. I was curious about this issue and I decided to dive deep into this and identify the root cause that affecting CPU stability and performance.
 
 **Action:**
 
 1. **Data Gathering & Initial Hypothesis:**
-   - I started by analyzing the server side, since the worker-side (Aaron) was processing tasks rapidly and it's operation was light.
-   - After reviewing system metrics and checking various forums and MySQL guides, I thought the problem may occur during multi-computer competition. (API call一般很快，那基本问题出现在与DB的交互，这是经验) Then I look into the code for this part and identified the use of the **for-update** SQL statement as a potential problem.
+   - I started by analyzing the server side, since the worker part(Aaron) processed tasks rapidly and its operation was light.
+   - After reviewing system metrics and checking various forums about this situation, I thought the problem may occur during multi-computer competition. (API call一般很快，那基本问题出现在与DB的交互，这是经验) Then I look into the code for this part and identified the use of the **for-update** may be the potential problem.
 2. **Deep Technical Analysis:**
-   - After reading the inner workings of the **for-update** command and discovered that it can generate **gap locks**, which may delay query execution and affect performance, which it is also not recommended in the book called *High Performance MySQL*.
-   - I then focused on the unusual CPU spikes. Because the system showed that, the CPU load spike when servers tried to fetched tasks. This led me to dive deeper into the MySQL. I found that MySQL used an automatic deadlock detection that checks for dependencies between threads. As the number of concurrent tasks increased, this mechanism caused high load on the CPU.
+   - After reading the inner workings of the **for-update** command, I discovered that it can generate **gap locks**. It may delay query execution and affect performance, which it is also not recommended in the book called *High Performance MySQL*.
+   - I then focused on the unusual CPU spikes. Because the system showed that, the CPU load spike when servers tried to fetched tasks. This led me to dive deeper into the MySQL. I found that MySQL used an automatic deadlock detection that checks for dependencies between queries. As the number of concurrent tasks increased, this mechanism caused high load on the CPU.
 3. **Implementing the Solution:**
    - To address both the gap-lock issue and the detection overhead, I dropped the lock produced by the MySQL and decided to implement by myself.
-   - After reviewing multiple forums and articles about lock, I introduced a **distributed locking mechanism** to better manage multiple-computer competition. Also, to address CPU load, I introduced **randomized delays** in task invocations to spread out the load.
+   - After reviewing multiple forums and articles about multi-computer competition, I introduced a **distributed locking mechanism** to better manage the consistency under competition. Also, to address CPU load, I introduced **randomized delays** in task invocations to spread out the load.
 
 **Result:**
-The adjustments led to a significant performance improvement: CPU usage became stable under load, and the overall system throughput increased greatly. By identifying and solving the problem of **for-update** and the deadlock detection, I not only solved the immediate performance issues but also gained valuable experience.
+The adjustments led to a great performance improvement: CPU became stable under load, and the system throughput greatly increased. By diving deep into the problem of **for-update** and the deadlock detection, I not only solved the immediate performance issues but also gained valuable experience.
+
+
+
+可以添加一些合作的内容
 
 ------
 
