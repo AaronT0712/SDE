@@ -15,7 +15,7 @@
 ------
 
 **Situation:**
-It was the AaronFlow project and I finished most part of development. However, during stress testing with **wrk** (测flowsvr), I noticed that the performance wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and checking the performance manager, I found that there were sudden spikes in CPU load, indicating that something deeper was affecting the system.
+It was the AaronFlow project and I finished most part of development. However, during stress testing with **wrk** (测flowsvr), I noticed that the QPS was only 200, which wasn’t as high as expected and also, the CPU usage was highly unstable. After using commands and checking the performance manager, I found that there were sudden spikes in CPU load, indicating that something deeper was affecting the system.
 
 **Task:**
 Although I had already applied standard optimizations like adjusting MySQL connection pools, the problem still exist. I was curious about this issue and I decided to dive deep into this and identify the root cause that affecting CPU stability and performance.
@@ -33,11 +33,9 @@ Although I had already applied standard optimizations like adjusting MySQL conne
    - After reviewing multiple forums and articles about multi-computer competition, I introduced a **distributed locking mechanism** to better manage the consistency under competition. Also, to address CPU load, I introduced **randomized delays** in task invocations to spread out the load.
 
 **Result:**
-The adjustments led to a great performance improvement: CPU became stable under load, and the system throughput greatly increased. By diving deep into the problem of **for-update** and the deadlock detection, I not only solved the immediate performance issues but also gained valuable experience.
+The adjustments led to a great performance improvement: CPU became stable under load, and the system throughput improved by 5 times. By diving deep into the problem of **for-update** and the deadlock detection, I not only solved the immediate performance issues but also gained valuable experience.
 
 
-
-可以添加一些合作的内容
 
 ------
 
