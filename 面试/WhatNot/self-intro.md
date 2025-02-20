@@ -2,7 +2,7 @@
 
 Hi, I am Yuhan,  recently graduated with a Master’s degree in Information Science from Cornell University, where I focus on backend software development, and machine learning. I was also the teaching assistant there. Before that, I earned the First Class Honors, Bachelor’s degree in Computer Science and Electronic Engineering, and won the Edgar Marchant Prize from the University of Liverpool in England.  Moreover, I got two papers decided. One was by the Conference and the other one was by the one of the top science journal as the second author.
 
-After discovering my great interest in Software, I practiced a lot and gained hands-on experience in developing skills like Java and Spring Boot framework, Database like MySQL and Redis, Development tools like Docker, Git and also the front-end skill. Recently I am also learning about the AWS. Apart from that, I've completed several personal or team projects and internships, and the works included building scalable system, Microservices, RESTful APIs, and Optimizations. These experience also improved my collaboration and communication skills and adaptability. 
+After discovering my great interest in Software, I practiced a lot and gained hands-on experience in developing skills like Java and Spring Boot framework, Database like MySQL and Redis, Development tools like Docker, Git and also the front-end skill. Apart from that, I've completed several personal or team projects, and the works included building scalable system, RESTful APIs, and Optimizations. These experience also improved my collaboration and communication skills and adaptability. 
 
 
 
